@@ -1,0 +1,45 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(160deg, #e8f5e9 0%, #e3f2fd 100%);
+  color: #1b3a2f;
+}
+
+.page {
+  width: min(560px, 92vw);
+  padding: 40px 36px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(27, 58, 47, 0.12);
+}
+
+h1 {
+  font-size: 1.6rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  margin-bottom: 28px;
+  line-height: 1.35;
+}
+
+.sections {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.sections li {
+  padding: 14px 18px;
+  background: #f1f8f4;
+  border: 1px solid #c8e6c9;
+  border-radius: 10px;
+  font-size: 1.05rem;
+}
