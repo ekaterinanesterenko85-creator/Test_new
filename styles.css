@@ -9,31 +9,49 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 24px 16px;
   font-family: "Segoe UI", Arial, sans-serif;
   background: linear-gradient(160deg, #e8f5e9 0%, #e3f2fd 100%);
   color: #1b3a2f;
 }
 
 .page {
-  width: min(560px, 92vw);
-  padding: 40px 36px;
+  width: min(640px, 94vw);
+  overflow: hidden;
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 12px 32px rgba(27, 58, 47, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(27, 58, 47, 0.14);
+  animation: card-in 0.8s ease both;
+}
+
+.hero {
+  overflow: hidden;
+  height: 240px;
+}
+
+.hero img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  animation: ken-burns 12s ease-in-out infinite alternate;
 }
 
 h1 {
-  font-size: 1.6rem;
-  letter-spacing: 0.04em;
+  font-size: 1.55rem;
+  letter-spacing: 0.05em;
   text-align: center;
-  margin-bottom: 28px;
+  margin: 28px 28px 22px;
   line-height: 1.35;
+  animation: fade-up 0.7s 0.25s ease both;
 }
 
 .sections {
   list-style: none;
   display: grid;
   gap: 12px;
+  padding: 0 28px 32px;
 }
 
 .sections li {
@@ -42,4 +60,74 @@ h1 {
   border: 1px solid #c8e6c9;
   border-radius: 10px;
   font-size: 1.05rem;
+  opacity: 0;
+  animation: fade-up 0.55s ease both, pulse-border 3.2s ease-in-out infinite;
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
+}
+
+.sections li:nth-child(1) { animation-delay: 0.4s, 1.2s; }
+.sections li:nth-child(2) { animation-delay: 0.55s, 1.6s; }
+.sections li:nth-child(3) { animation-delay: 0.7s, 2s; }
+.sections li:nth-child(4) { animation-delay: 0.85s, 2.4s; }
+
+.sections li:hover {
+  transform: translateX(8px);
+  background: #e8f5e9;
+  box-shadow: 0 6px 16px rgba(46, 125, 50, 0.12);
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes ken-burns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: #c8e6c9;
+  }
+  50% {
+    border-color: #81c784;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero {
+    height: 180px;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+    margin: 22px 18px 18px;
+  }
+
+  .sections {
+    padding: 0 18px 24px;
+  }
 }
