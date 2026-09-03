@@ -655,7 +655,11 @@
   function applyTheme() {
     document.documentElement.setAttribute("data-theme", state.theme || "light");
     var toggle = $("#theme-toggle");
-    if (toggle) toggle.setAttribute("aria-pressed", state.theme === "dark" ? "true" : "false");
+    if (toggle) {
+      var dark = state.theme === "dark";
+      toggle.setAttribute("aria-pressed", dark ? "true" : "false");
+      toggle.textContent = dark ? "Тень" : "Свет";
+    }
   }
 
   function hasProgram() {

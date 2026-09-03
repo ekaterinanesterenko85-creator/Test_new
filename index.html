@@ -4,16 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Персональная программа снижения веса</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="grain" aria-hidden="true"></div>
   <a class="skip-link" href="#main">Перейти к содержанию</a>
 
   <div id="demo-banner" class="demo-banner" hidden>Открыт демонстрационный пример. Это не ваши данные.</div>
 
   <header class="topbar">
     <div class="topbar-inner">
-      <a class="logo" href="#home" data-view-link="home">Программа снижения веса</a>
+      <a class="logo" href="#home" data-view-link="home">Программа <span>снижения веса</span></a>
       <nav id="app-nav" class="app-nav" hidden aria-label="Основной раздел">
         <a href="#program" data-nav="program">Моя программа</a>
         <a href="#nutrition" data-nav="nutrition">Питание</a>
@@ -23,7 +27,7 @@
         <a href="#materials" data-nav="materials">Полезные материалы</a>
         <a href="#settings" data-nav="settings">Настройки</a>
       </nav>
-      <button class="icon-btn" type="button" id="theme-toggle" data-action="theme" aria-label="Переключить тему" aria-pressed="false">Тема</button>
+      <button class="icon-btn" type="button" id="theme-toggle" data-action="theme" aria-label="Переключить тему" aria-pressed="false">Свет</button>
     </div>
   </header>
 
@@ -34,6 +38,7 @@
           <img src="images/park-walk.png" alt="Двое взрослых спокойно гуляют в парке">
         </figure>
         <div class="hero-copy">
+          <p class="kicker">Для взрослых · без обещаний «идеального тела»</p>
           <h1>Персональная программа снижения веса</h1>
           <p class="subtitle">Питание, движение и привычки с учётом ваших данных</p>
           <p>Вы заполняете анкету, программа проверяет ограничения и предлагает ориентировочный план. Это информационный инструмент, а не диагноз и не лечение. Перед началом обсудите программу с врачом.</p>
@@ -46,12 +51,13 @@
       </div>
 
       <section class="how" id="how">
+        <p class="kicker">Четыре спокойных шага</p>
         <h2>Как работает программа</h2>
         <ol class="steps">
-          <li><span>1</span>Заполнение анкеты</li>
-          <li><span>2</span>Проверка ограничений</li>
-          <li><span>3</span>Формирование программы</li>
-          <li><span>4</span>Отслеживание результатов</li>
+          <li><span>01</span><b>Анкета</b><em>Рассказываете о себе своими словами</em></li>
+          <li><span>02</span><b>Ограничения</b><em>Проверяем, где нужна осторожность</em></li>
+          <li><span>03</span><b>Ориентир</b><em>Собираем питание, движение и привычки</em></li>
+          <li><span>04</span><b>Дневник</b><em>Смотрим среднее, а не одно взвешивание</em></li>
         </ol>
       </section>
     </section>
