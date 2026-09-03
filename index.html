@@ -3,21 +3,310 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Программа для снижения веса</title>
+  <title>Персональная программа снижения веса</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="page">
-    <figure class="hero">
-      <img src="images/gym-workout.png" alt="Тренировка в спортзале: приседания с гантелями">
-    </figure>
-    <h1>ПРОГРАММА ДЛЯ СНИЖЕНИЯ ВЕСА</h1>
-    <ul class="sections">
-      <li>Меню</li>
-      <li>Программа тренировок</li>
-      <li>Полезные привычки</li>
-      <li>Учет результатов</li>
-    </ul>
+  <a class="skip-link" href="#main">Перейти к содержанию</a>
+
+  <div id="demo-banner" class="demo-banner" hidden>Открыт демонстрационный пример. Это не ваши данные.</div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="logo" href="#home" data-view-link="home">Программа снижения веса</a>
+      <nav id="app-nav" class="app-nav" hidden aria-label="Основной раздел">
+        <a href="#program" data-nav="program">Моя программа</a>
+        <a href="#nutrition" data-nav="nutrition">Питание</a>
+        <a href="#workouts" data-nav="workouts">Тренировки</a>
+        <a href="#habits" data-nav="habits">Привычки</a>
+        <a href="#progress" data-nav="progress">Прогресс</a>
+        <a href="#materials" data-nav="materials">Полезные материалы</a>
+        <a href="#settings" data-nav="settings">Настройки</a>
+      </nav>
+      <button class="icon-btn" type="button" id="theme-toggle" data-action="theme" aria-label="Переключить тему" aria-pressed="false">Тема</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section data-view="home" class="view home-view">
+      <div class="hero-card page-in">
+        <figure class="hero">
+          <img src="images/park-walk.png" alt="Двое взрослых спокойно гуляют в парке">
+        </figure>
+        <div class="hero-copy">
+          <h1>Персональная программа снижения веса</h1>
+          <p class="subtitle">Питание, движение и привычки с учётом ваших данных</p>
+          <p>Вы заполняете анкету, программа проверяет ограничения и предлагает ориентировочный план. Это информационный инструмент, а не диагноз и не лечение. Перед началом обсудите программу с врачом.</p>
+          <div class="hero-actions">
+            <button class="btn" type="button" data-view-link="quiz">Составить мою программу</button>
+            <button class="btn btn-ghost" type="button" id="continue-btn" data-view-link="program" hidden>Продолжить</button>
+            <button class="btn btn-light" type="button" data-action="demo">Посмотреть пример</button>
+          </div>
+        </div>
+      </div>
+
+      <section class="how" id="how">
+        <h2>Как работает программа</h2>
+        <ol class="steps">
+          <li><span>1</span>Заполнение анкеты</li>
+          <li><span>2</span>Проверка ограничений</li>
+          <li><span>3</span>Формирование программы</li>
+          <li><span>4</span>Отслеживание результатов</li>
+        </ol>
+      </section>
+    </section>
+
+    <section data-view="quiz" class="view" hidden>
+      <form id="quiz-form" class="quiz" novalidate>
+        <div class="quiz-progress">
+          <p id="quiz-progress-label">Шаг 1 из 5</p>
+          <div class="bar" aria-hidden="true"><span id="quiz-bar"></span></div>
+          <ol class="progress-steps">
+            <li class="progress-step is-current">О вас</li>
+            <li class="progress-step">Активность</li>
+            <li class="progress-step">Питание</li>
+            <li class="progress-step">Здоровье</li>
+            <li class="progress-step">Согласие</li>
+          </ol>
+        </div>
+
+        <div class="quiz-panel" data-step="1">
+          <h1>Персональная анкета</h1>
+          <p class="lead">Можно указать имя или псевдоним. Данные остаются только на этом устройстве.</p>
+          <div class="form-grid">
+            <label>Имя или псевдоним<input name="name" required maxlength="40" autocomplete="nickname"></label>
+            <label>Возраст, лет<input name="age" type="number" required min="1" max="120"></label>
+            <label>Биологический пол для расчётной формулы
+              <select name="sex" required>
+                <option value="">Выберите</option>
+                <option value="female">Женский</option>
+                <option value="male">Мужской</option>
+              </select>
+            </label>
+            <label>Рост, см<input name="heightCm" type="number" required min="120" max="230"></label>
+            <label>Текущий вес, кг<input name="weightKg" type="number" required min="1" max="300" step="0.1"></label>
+            <label>Желаемый вес, кг<input name="targetWeightKg" type="number" required min="1" max="300" step="0.1"></label>
+            <label>Обхват талии, см<input name="waistCm" type="number" required min="40" max="200" step="0.5"></label>
+          </div>
+          <button class="btn" type="button" data-action="quiz-next">Далее</button>
+        </div>
+
+        <div class="quiz-panel" data-step="2" hidden>
+          <h1>Активность и тренировки</h1>
+          <div class="form-grid">
+            <label>Обычный уровень активности
+              <select name="activityLevel" required>
+                <option value="sedentary">Сидячий, почти без прогулок</option>
+                <option value="light">Лёгкий: прогулки несколько раз в неделю</option>
+                <option value="moderate">Умеренный: регулярные тренировки 3–5 раз</option>
+                <option value="high">Высокий: почти ежедневная нагрузка</option>
+              </select>
+            </label>
+            <label>Среднее количество шагов в день<input name="avgSteps" type="number" required min="0" max="40000"></label>
+            <label>Опыт тренировок
+              <select name="trainingExperience" required>
+                <option value="none">Почти нет</option>
+                <option value="long-break">Был перерыв больше года</option>
+                <option value="beginner">Начинающий</option>
+                <option value="intermediate">Средний</option>
+                <option value="advanced">Подготовленный</option>
+              </select>
+            </label>
+            <label>Сколько тренировок в неделю реально получается
+              <input name="sessionsPerWeek" type="number" required min="1" max="7" value="3">
+            </label>
+            <label>Доступная продолжительность тренировки
+              <select name="sessionMinutes" required>
+                <option value="20">20 минут</option>
+                <option value="30" selected>30 минут</option>
+                <option value="45">45 минут</option>
+                <option value="60">60 минут</option>
+              </select>
+            </label>
+            <label>Место тренировок
+              <select name="location" required>
+                <option value="home">Дом</option>
+                <option value="gym">Зал</option>
+                <option value="outdoor">Улица</option>
+              </select>
+            </label>
+            <fieldset class="full">
+              <legend>Доступный инвентарь</legend>
+              <label class="check"><input type="checkbox" name="equipment" value="none"> Без оборудования</label>
+              <label class="check"><input type="checkbox" name="equipment" value="bands"> Резинки</label>
+              <label class="check"><input type="checkbox" name="equipment" value="dumbbells"> Гантели</label>
+              <label class="check"><input type="checkbox" name="equipment" value="machines"> Тренажёры</label>
+            </fieldset>
+            <label>Предпочтительный вид активности
+              <select name="preferredActivity" required>
+                <option value="walking">Ходьба</option>
+                <option value="strength">Силовые упражнения</option>
+                <option value="mixed" selected>Смешанный</option>
+                <option value="stretching">Растяжка и спокойная практика</option>
+                <option value="cycling">Велосипед или велотренажёр</option>
+              </select>
+            </label>
+            <label>Характер работы
+              <select name="workType" required>
+                <option value="sedentary">Сидячая</option>
+                <option value="mixed">Смешанная</option>
+                <option value="physical">Физическая</option>
+              </select>
+            </label>
+          </div>
+          <div class="quiz-nav">
+            <button class="btn btn-ghost" type="button" data-action="quiz-prev">Назад</button>
+            <button class="btn" type="button" data-action="quiz-next">Далее</button>
+          </div>
+        </div>
+
+        <div class="quiz-panel" data-step="3" hidden>
+          <h1>Питание, сон и быт</h1>
+          <div class="form-grid">
+            <label>Средняя продолжительность сна, часов<input name="sleepHours" type="number" required min="3" max="14" step="0.5" value="7"></label>
+            <label>Уровень стресса
+              <select name="stressLevel" required>
+                <option value="low">Низкий</option>
+                <option value="medium" selected>Средний</option>
+                <option value="high">Высокий</option>
+              </select>
+            </label>
+            <label>Особенности питания
+              <select name="eatingPattern" required>
+                <option value="regular">Обычно регулярные приёмы пищи</option>
+                <option value="irregular">Нерегулярно</option>
+                <option value="snacks">Частые перекусы</option>
+                <option value="skip">Часто пропускаю завтрак</option>
+                <option value="late">Еда поздно вечером</option>
+              </select>
+            </label>
+            <label>Количество приёмов пищи
+              <select name="mealsPerDay" required>
+                <option value="3">3</option>
+                <option value="4">3 плюс перекус</option>
+                <option value="5">3 плюс 2 перекуса</option>
+              </select>
+            </label>
+            <label class="full">Пищевые предпочтения<textarea name="foodPreferences" rows="2" maxlength="300" placeholder="Например, люблю супы и каши"></textarea></label>
+            <label class="full">Продукты, которые вы не едите<textarea name="excludedFoods" rows="2" maxlength="300" placeholder="Через запятую, например: грибы, печень"></textarea></label>
+            <fieldset class="full">
+              <legend>Аллергии и непереносимости</legend>
+              <label class="check"><input type="checkbox" name="allergies" value="milk"> Молоко</label>
+              <label class="check"><input type="checkbox" name="allergies" value="egg"> Яйца</label>
+              <label class="check"><input type="checkbox" name="allergies" value="gluten"> Глютен</label>
+              <label class="check"><input type="checkbox" name="allergies" value="nuts"> Орехи</label>
+              <label class="check"><input type="checkbox" name="allergies" value="peanut"> Арахис</label>
+              <label class="check"><input type="checkbox" name="allergies" value="fish"> Рыба</label>
+              <label class="check"><input type="checkbox" name="allergies" value="soy"> Соя</label>
+              <label class="check"><input type="checkbox" name="allergies" value="sesame"> Кунжут</label>
+              <label>Другое<input name="allergyComment" maxlength="120"></label>
+            </fieldset>
+            <label>Тип питания
+              <select name="dietType" required>
+                <option value="regular">Без ограничений по мясу и рыбе</option>
+                <option value="vegetarian">Вегетарианство</option>
+                <option value="vegan">Веганство</option>
+              </select>
+            </label>
+            <label>Примерный бюджет на питание
+              <select name="budget" required>
+                <option value="low">Скромный</option>
+                <option value="medium" selected>Обычный</option>
+                <option value="comfortable">Комфортный</option>
+              </select>
+            </label>
+            <label>Время на приготовление еды
+              <select name="cookingTime" required>
+                <option value="15">До 15 минут</option>
+                <option value="30" selected>Около 30 минут</option>
+                <option value="60">Можно час</option>
+              </select>
+            </label>
+          </div>
+          <div class="quiz-nav">
+            <button class="btn btn-ghost" type="button" data-action="quiz-prev">Назад</button>
+            <button class="btn" type="button" data-action="quiz-next">Далее</button>
+          </div>
+        </div>
+
+        <div class="quiz-panel" data-step="4" hidden>
+          <h1>Здоровье и ограничения</h1>
+          <p class="lead">Не нужно вводить точный диагноз. Если сомневаетесь, выберите «Не знаю».</p>
+          <label class="full">Заболевания и ограничения, если хотите описать своими словами
+            <textarea name="diseasesComment" rows="3" maxlength="500"></textarea>
+          </label>
+          <div id="health-fields"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-ghost" type="button" data-action="quiz-prev">Назад</button>
+            <button class="btn" type="button" data-action="quiz-next">Далее</button>
+          </div>
+        </div>
+
+        <div class="quiz-panel" data-step="5" hidden>
+          <h1>Согласие</h1>
+          <label class="consent">
+            <input type="checkbox" name="consent" required>
+            <span>Я понимаю, что программа носит информационный характер, не заменяет консультацию врача и не предназначена для диагностики или лечения заболеваний.</span>
+          </label>
+          <p><a href="#safety" data-view-link="safety">Открыть полный раздел «Безопасность»</a></p>
+          <div class="quiz-nav">
+            <button class="btn btn-ghost" type="button" data-action="quiz-prev">Назад</button>
+            <button class="btn" type="submit">Получить ориентировочную программу</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <section data-view="program" class="view" hidden id="view-program"></section>
+    <section data-view="limited" class="view" hidden id="view-limited"></section>
+    <section data-view="nutrition" class="view" hidden id="view-nutrition"></section>
+    <section data-view="workouts" class="view" hidden id="view-workouts"></section>
+    <section data-view="habits" class="view" hidden id="view-habits"></section>
+    <section data-view="progress" class="view" hidden id="view-progress"></section>
+    <section data-view="materials" class="view" hidden id="view-materials"></section>
+    <section data-view="settings" class="view" hidden id="view-settings"></section>
+
+    <section data-view="safety" class="view" hidden>
+      <h1>Безопасность</h1>
+      <p>Программа предназначена только для совершеннолетних. Она не ставит диагнозы, не назначает лекарства, лечение и лечебные диеты. Расчёты калорий и планы — информационный ориентир.</p>
+      <h2>Когда дефицит не рассчитывается</h2>
+      <ul class="plain">
+        <li>возраст младше 18 лет;</li>
+        <li>ИМТ ниже 18,5;</li>
+        <li>беременность или грудное вскармливание;</li>
+        <li>риск расстройства пищевого поведения;</li>
+        <li>красные флаги: боль в груди, обмороки, выраженная одышка, недавняя операция, острая травма, неконтролируемое давление, серьёзное сердечно-сосудистое заболевание.</li>
+      </ul>
+      <p>При боли в груди, обмороке, внезапной слабости или затруднении дыхания прекратите нагрузку и обратитесь за медицинской помощью. Приложение не определяет причину симптома.</p>
+      <p>Калорийность не опускается автоматически ниже ориентира 1200 ккал для женщин и 1500 ккал для мужчин.</p>
+      <p><a href="#home" data-view-link="home">На главную</a></p>
+    </section>
   </main>
+
+  <nav id="bottom-nav" class="bottom-nav" hidden aria-label="Мобильная навигация">
+    <a href="#program" data-nav="program">Программа</a>
+    <a href="#nutrition" data-nav="nutrition">Питание</a>
+    <a href="#workouts" data-nav="workouts">Тренировки</a>
+    <a href="#habits" data-nav="habits">Привычки</a>
+    <button type="button" data-nav="more" aria-expanded="false" aria-controls="more-sheet">Ещё</button>
+  </nav>
+  <div id="more-sheet" class="more-sheet" hidden>
+    <a href="#progress" data-nav="progress">Прогресс</a>
+    <a href="#materials" data-nav="materials">Полезные материалы</a>
+    <a href="#settings" data-nav="settings">Настройки</a>
+    <a href="#safety" data-nav="safety">Безопасность</a>
+  </div>
+
+  <footer class="site-footer">
+    <p>Информационный сервис, не медицинская услуга. Перед началом программы обсудите её с врачом. При ухудшении самочувствия прекратите тренировку. <a href="#safety" data-view-link="safety">Безопасность</a></p>
+  </footer>
+
+  <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
+  <div id="modal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" id="modal-content"></div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
