@@ -931,12 +931,12 @@
     var appNav = $("#app-nav");
     var bottom = $("#bottom-nav");
     var more = $("#more-sheet");
-    var showNav = hasProgram();
-    if (appNav) appNav.hidden = !showNav;
+    // Верхнее меню всегда доступно; разделы сами показывают пустое состояние без программы
+    if (appNav) appNav.hidden = false;
     if (bottom) bottom.hidden = true;
     if (more) more.hidden = true;
     moreOpen = false;
-    document.body.classList.toggle("has-app-nav", showNav);
+    document.body.classList.toggle("has-app-nav", true);
     var demoBanner = $("#demo-banner");
     if (demoBanner) demoBanner.hidden = !state.isDemo;
   }

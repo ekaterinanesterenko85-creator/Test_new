@@ -554,6 +554,11 @@ button:disabled {
   border-radius: 999px;
 }
 
+.hero-actions .btn[hidden],
+#continue-btn[hidden] {
+  display: none !important;
+}
+
 .hero-demo-link {
   appearance: none;
   border: 0;
