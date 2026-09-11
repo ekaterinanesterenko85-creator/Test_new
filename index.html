@@ -6,7 +6,7 @@
   <title>Персональная программа снижения веса</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital@1&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -34,18 +34,20 @@
   <main id="main">
     <section data-view="home" class="view home-view">
       <div class="hero-card page-in">
+        <p class="kicker hero-kicker">Для взрослых · без обещаний «идеального тела»</p>
+        <h1 class="hero-title">Персональная программа снижения веса</h1>
+        <p class="subtitle hero-subtitle">Питание, движение и привычки с учётом ваших данных</p>
         <figure class="hero">
-          <img src="images/park-walk.png" alt="Двое взрослых спокойно гуляют в парке">
+          <img src="images/hero-walk.png" alt="Женщина на прогулке в парке у набережной" width="1024" height="682">
         </figure>
-        <div class="hero-copy">
-          <p class="kicker">Для взрослых · без обещаний «идеального тела»</p>
-          <h1>Персональная программа снижения веса</h1>
-          <p class="subtitle">Питание, движение и привычки с учётом ваших данных</p>
-          <p>Вы заполняете анкету, программа проверяет ограничения и предлагает ориентировочный план. Это информационный инструмент, а не диагноз и не лечение. Перед началом обсудите программу с врачом.</p>
+        <div class="hero-text">
+          <p class="hero-lead">Вы заполняете анкету, программа проверяет ограничения и предлагает ориентировочный план. Это информационный инструмент, а не диагноз и не лечение. Перед началом обсудите программу с врачом.</p>
           <div class="hero-actions">
-            <button class="btn" type="button" data-view-link="quiz">Составить мою программу</button>
-            <button class="btn btn-ghost" type="button" id="continue-btn" data-view-link="program" hidden>Продолжить</button>
-            <button class="btn btn-light" type="button" data-action="demo">Посмотреть пример</button>
+            <div class="hero-actions-row">
+              <button class="btn" type="button" data-view-link="quiz">Составить мою программу</button>
+              <button class="btn btn-ghost" type="button" id="continue-btn" data-view-link="program" hidden>Продолжить</button>
+            </div>
+            <button class="hero-demo-link" type="button" data-action="demo">Посмотреть пример</button>
           </div>
         </div>
       </div>
@@ -53,6 +55,7 @@
       <section class="how" id="how">
         <p class="kicker">Четыре спокойных шага</p>
         <h2>Как работает программа</h2>
+        <span class="how-title-line" aria-hidden="true"></span>
         <ol class="steps">
           <li><span>01</span><b>Анкета</b><em>Рассказываете о себе своими словами</em></li>
           <li><span>02</span><b>Ограничения</b><em>Проверяем, где нужна осторожность</em></li>

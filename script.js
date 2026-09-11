@@ -646,6 +646,8 @@
 
   function toast(message) {
     var el = $("#toast");
+    el.hidden = true;
+    void el.offsetWidth;
     el.textContent = message;
     el.hidden = false;
     clearTimeout(toast._t);
@@ -669,6 +671,7 @@
   function showView(name) {
     $all("[data-view]").forEach(function (view) {
       view.hidden = view.getAttribute("data-view") !== name;
+      view.classList.remove("is-entering");
     });
     $all("[data-nav]").forEach(function (link) {
       var active = link.getAttribute("data-nav") === name;
@@ -680,6 +683,9 @@
     moreOpen = false;
     var more = $("#more-sheet");
     if (more) more.hidden = true;
+    if (window.history && history.replaceState) {
+      history.replaceState(null, "", "#" + name);
+    }
     window.scrollTo(0, 0);
     if (name === "program") renderProgram();
     if (name === "nutrition") renderNutrition();
@@ -690,6 +696,229 @@
     if (name === "settings") renderSettings();
     if (name === "limited") renderLimited();
     if (name === "home") refreshChrome();
+    var activeView = document.querySelector('[data-view="' + name + '"]');
+    if (activeView) {
+      void activeView.offsetWidth;
+      activeView.classList.add("is-entering");
+      enhanceFoldHeadings(activeView, name);
+      animateViewContent(activeView, name);
+    }
+  }
+
+  function prefersReducedMotion() {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+
+  function animateViewContent(root, sectionName) {
+    if (!root) return;
+    var reduce = prefersReducedMotion();
+    var selector = [
+      ".cards > *",
+      ".panel",
+      ".meal-card",
+      ".session-card",
+      ".day-block",
+      ".notice",
+      ".habit-table-wrap",
+      ".charts > *",
+      ".settings-actions",
+      ".btn-row",
+      ".btn-stack",
+      ".segmented",
+      ".toolbar",
+      ".empty",
+      ".diary-list > li",
+      ".quiz"
+    ].join(", ");
+
+    var nodes = root.querySelectorAll(selector);
+    Array.prototype.forEach.call(nodes, function (el, i) {
+      el.classList.remove("is-revealed");
+      el.classList.add("reveal-item");
+      el.style.setProperty("--reveal-i", String(Math.min(i, 12)));
+      if (reduce) {
+        el.classList.add("is-revealed");
+        return;
+      }
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(function () {
+          el.classList.add("is-revealed");
+        });
+      });
+    });
+
+    if (sectionName === "home") {
+      animateHomeExtras(root, reduce);
+    }
+  }
+
+  function animateHomeExtras(root, reduce) {
+    var actions = root.querySelector(".hero-actions");
+    if (actions) {
+      actions.classList.remove("is-ready");
+      if (reduce) {
+        actions.classList.add("is-ready");
+      } else {
+        window.setTimeout(function () {
+          actions.classList.add("is-ready");
+        }, 280);
+      }
+    }
+
+    var steps = root.querySelectorAll(".steps li");
+    Array.prototype.forEach.call(steps, function (el, i) {
+      el.classList.add("reveal-item");
+      el.classList.remove("is-revealed");
+      el.style.setProperty("--reveal-i", String(i));
+      if (reduce) el.classList.add("is-revealed");
+    });
+
+    setupHomeScrollObserver(root, reduce);
+  }
+
+  var homeScrollObserver = null;
+
+  function setupHomeScrollObserver(root, reduce) {
+    if (homeScrollObserver) {
+      homeScrollObserver.disconnect();
+      homeScrollObserver = null;
+    }
+    var how = root.querySelector(".how");
+    if (!how) return;
+    how.classList.remove("is-inview");
+
+    if (reduce || !("IntersectionObserver" in window)) {
+      how.classList.add("is-inview");
+      Array.prototype.forEach.call(root.querySelectorAll(".steps li"), function (el) {
+        el.classList.add("is-revealed");
+      });
+      return;
+    }
+
+    homeScrollObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          how.classList.add("is-inview");
+          Array.prototype.forEach.call(root.querySelectorAll(".steps li"), function (el) {
+            el.classList.add("is-revealed");
+          });
+          homeScrollObserver.disconnect();
+          homeScrollObserver = null;
+        });
+      },
+      { threshold: 0.28, rootMargin: "0px 0px -8% 0px" }
+    );
+    homeScrollObserver.observe(how);
+  }
+
+  function enhanceFoldHeadings(root, sectionName) {
+    // FoldText только на главном заголовке главной страницы
+    if (!root || sectionName !== "home") return;
+    var h1 = root.querySelector(".hero-title");
+    if (h1) mountHeroFoldText(h1);
+  }
+
+  /**
+   * FoldText (адаптация React Bits): splitBy=char, hinge=top, trigger=mount.
+   * Слова в nowrap-обёртках, чтобы буквы одного слова не переносились.
+   */
+  function mountHeroFoldText(h1) {
+    var text = h1.getAttribute("data-fold-text");
+    if (!text) {
+      text = (h1.textContent || "").replace(/\s+/g, " ").trim();
+    }
+    if (!text) return;
+
+    var duration = 0.65;
+    var stagger = 0.045;
+    var perspective = 700;
+    var creaseShading = 0.55;
+    var hinge = "top";
+    var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    var activeDuration = reduceMotion ? Math.min(duration, 0.22) : duration;
+    var activeStagger = reduceMotion ? Math.min(stagger, 0.02) : stagger;
+
+    h1.setAttribute("data-fold-text", text);
+    h1.setAttribute("aria-label", text);
+    h1.classList.add("has-fold-text");
+    h1.textContent = "";
+
+    var root = document.createElement("span");
+    root.className = "fold-text";
+    root.style.setProperty("--fold-text-font-weight", "600");
+    root.style.setProperty("--fold-text-color", "var(--color-text-primary)");
+    root.style.setProperty("--fold-perspective", perspective + "px");
+
+    var sr = document.createElement("span");
+    sr.className = "fold-text-sr-only";
+    sr.textContent = text;
+    root.appendChild(sr);
+
+    var visual = document.createElement("span");
+    visual.className = "fold-text-visual";
+    visual.setAttribute("aria-hidden", "true");
+
+    var hingeOrigins = {
+      top: "50% 0%",
+      bottom: "50% 100%",
+      left: "0% 50%",
+      right: "100% 50%"
+    };
+    var origin = hingeOrigins[hinge];
+    var index = 0;
+
+    text.split(/(\s+)/).forEach(function (part) {
+      if (!part) return;
+      if (/^\s+$/.test(part)) {
+        var ws = document.createElement("span");
+        ws.className = "fold-text-whitespace";
+        ws.textContent = part.replace(/ /g, "\u00A0");
+        visual.appendChild(ws);
+        return;
+      }
+
+      var word = document.createElement("span");
+      word.className = "fold-text-word";
+
+      Array.from(part).forEach(function (ch) {
+        var segment = document.createElement("span");
+        segment.className = "fold-text-segment";
+        segment.setAttribute("data-fold-split", "char");
+        segment.style.setProperty("--fold-perspective", perspective + "px");
+
+        var piece = document.createElement("span");
+        piece.className = "fold-text-piece";
+        piece.setAttribute("data-fold-hinge", hinge);
+        piece.style.transformOrigin = origin;
+        piece.style.setProperty("--fold-crease", reduceMotion ? "0" : String(creaseShading));
+        piece.style.animationDuration = activeDuration + "s";
+        piece.style.animationDelay = index * activeStagger + "s";
+        piece.textContent = ch;
+        segment.appendChild(piece);
+        word.appendChild(segment);
+        index += 1;
+      });
+
+      visual.appendChild(word);
+    });
+
+    root.appendChild(visual);
+    h1.appendChild(root);
+
+    void root.offsetWidth;
+    root.classList.add("is-folding");
+
+    var pieces = root.querySelectorAll(".fold-text-piece");
+    var totalMs = Math.round(((Math.max(index, 1) - 1) * activeStagger + activeDuration) * 1000) + 80;
+    window.setTimeout(function () {
+      Array.prototype.forEach.call(pieces, function (piece) {
+        piece.classList.add("is-folded");
+        piece.style.opacity = "1";
+        piece.style.transform = "none";
+        piece.style.setProperty("--fold-crease", "0");
+      });
+    }, totalMs);
   }
 
   function refreshChrome() {
@@ -753,10 +982,21 @@
     );
   }
 
-  function setQuizStep(step) {
+  function setQuizStep(step, opts) {
+    opts = opts || {};
+    var prev = quizStep;
+    var animate = opts.animate !== false && prev !== step;
+    var goingNext = step > prev;
     quizStep = step;
     $all(".quiz-panel").forEach(function (panel) {
-      panel.hidden = Number(panel.getAttribute("data-step")) !== step;
+      var panelStep = Number(panel.getAttribute("data-step"));
+      var isTarget = panelStep === step;
+      panel.classList.remove("is-slide-in-next", "is-slide-in-prev");
+      panel.hidden = !isTarget;
+      if (isTarget && animate) {
+        void panel.offsetWidth;
+        panel.classList.add(goingNext ? "is-slide-in-next" : "is-slide-in-prev");
+      }
     });
     $all(".progress-step").forEach(function (el, i) {
       el.classList.toggle("is-done", i + 1 < step);
@@ -1018,7 +1258,7 @@
         card("Сон и восстановление", (profile.sleepHours || "—") + " ч, стресс: " + stressLabel(profile.stressLevel), "Восстановление важнее дополнительных подходов.") +
         card("До цели", weekText, "Ориентировочный диапазон времени, не обещание результата.") +
       "</div>" +
-      (review ? '<section class="panel"><h2>Короткий отчёт</h2><p>' + review.text + "</p>" + (review.type !== "keep" ? '<button class="btn" type="button" data-action="confirm-adjust" data-type="' + review.type + '">Подтвердить небольшую корректировку</button>' : "") + "</section>" : "") +
+      (review ? '<section class="panel"><h2>Короткий отчёт</h2><p>' + review.text + "</p>" + (review.type !== "keep" ? '<div class="btn-row"><button class="btn" type="button" data-action="confirm-adjust" data-type="' + review.type + '">Подтвердить небольшую корректировку</button></div>' : "") + "</section>" : "") +
       '<section class="panel" id="calc-details"><h2>Как выполнен расчёт</h2>' +
         "<ul class='plain'>" +
           "<li>ИМТ = вес (кг) / [рост (м)]² = " + profile.weightKg + " / (" + (profile.heightCm / 100).toFixed(2) + ")².</li>" +
@@ -1067,7 +1307,7 @@
         card("Дневник", "Самочувствие", "Можно отмечать сон, настроение и бытовую активность без цели похудения.") +
         card("Движение", "По разрешению врача", "Не добавляйте тренировки, пока специалист не подтвердит безопасность.") +
       "</div>" +
-      '<p><button class="btn" type="button" data-view-link="progress">Открыть дневник самочувствия</button> <button class="btn btn-ghost" type="button" data-view-link="safety">Раздел «Безопасность»</button></p>';
+      '<div class="btn-row"><button class="btn" type="button" data-view-link="progress">Открыть дневник самочувствия</button><button class="btn btn-ghost" type="button" data-view-link="safety">Раздел «Безопасность»</button></div>';
   }
 
   function renderNutrition() {
@@ -1240,12 +1480,12 @@
         '<label>Настроение<select name="mood"><option value="ok">Ровное</option><option value="low">Снижено</option><option value="high">Приподнятое</option></select></label>' +
         '<label>Голод<select name="hunger"><option value="medium">Умеренный</option><option value="low">Слабый</option><option value="high">Сильный</option></select></label>' +
         '<label class="full">Заметки<textarea name="notes" rows="2" maxlength="400"></textarea></label>' +
-        '<button class="btn" type="submit">Сохранить запись</button>' +
+        '<button class="btn full" type="submit">Сохранить запись</button>' +
       "</form>" : "") +
       list;
     requestAnimationFrame(function () {
-      drawChart($("#chart-weight"), entries.map(function (e) { return { x: e.date, y: Number(e.weight) }; }).filter(function (p) { return p.y; }), "#1b5e40");
-      drawChart($("#chart-waist"), entries.map(function (e) { return { x: e.date, y: Number(e.waist) }; }).filter(function (p) { return p.y; }), "#c4783a");
+      drawChart($("#chart-weight"), entries.map(function (e) { return { x: e.date, y: Number(e.weight) }; }).filter(function (p) { return p.y; }), "#161816");
+      drawChart($("#chart-waist"), entries.map(function (e) { return { x: e.date, y: Number(e.waist) }; }).filter(function (p) { return p.y; }), "#C8E600");
       var form = $("#diary-form");
       if (form) form.date.value = isoDate(new Date());
     });
@@ -1266,8 +1506,8 @@
     var h = canvas.height;
     ctx.clearRect(0, 0, w, h);
     if (!points.length) {
-      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--muted") || "#7a8b82";
-      ctx.font = "16px Segoe UI, sans-serif";
+      ctx.fillStyle = (getComputedStyle(document.documentElement).getPropertyValue("--color-text-secondary") || "#646861").trim();
+      ctx.font = "500 16px Rubik, Arial, sans-serif";
       ctx.fillText("Недостаточно данных для графика", 24, h / 2);
       return;
     }
@@ -1275,7 +1515,7 @@
     var ys = points.map(function (p) { return p.y; });
     var min = Math.min.apply(null, ys) - 1;
     var max = Math.max.apply(null, ys) + 1;
-    ctx.strokeStyle = "#c8e6c9";
+    ctx.strokeStyle = (getComputedStyle(document.documentElement).getPropertyValue("--color-border") || "#D9DDD7").trim();
     ctx.beginPath();
     ctx.moveTo(pad, pad);
     ctx.lineTo(pad, h - pad);
@@ -1302,7 +1542,7 @@
   }
 
   function renderMaterials() {
-    $("#view-materials").innerHTML = "<h1>Полезные материалы</h1>" + APP_DATA.articles.map(function (a) {
+    $("#view-materials").innerHTML = "<h1>Полезные материалы</h1><p class='lead'>Короткие тексты про питание, движение и повседневные привычки.</p>" + APP_DATA.articles.map(function (a) {
       return '<article class="panel"><h2>' + a.title + "</h2><p>" + a.body + "</p></article>";
     }).join("");
   }
@@ -1312,9 +1552,11 @@
     root.innerHTML =
       "<h1>Настройки</h1>" +
       '<p class="lead">Данные хранятся только в браузере на этом устройстве.</p>' +
-      (state.isDemo ? '<p><button class="btn" type="button" data-action="clear-demo">Очистить пример и заполнить анкету</button></p>' : "") +
-      '<p><button class="btn" type="button" data-action="demo">Посмотреть пример</button></p>' +
-      '<p><button class="btn btn-danger" type="button" data-action="delete-data">Удалить все мои данные</button></p>' +
+      '<div class="settings-actions">' +
+        (state.isDemo ? '<button class="btn" type="button" data-action="clear-demo">Очистить пример и заполнить анкету</button>' : "") +
+        '<button class="btn" type="button" data-action="demo">Посмотреть пример</button>' +
+        '<button class="btn btn-danger" type="button" data-action="delete-data">Удалить все мои данные</button>' +
+      "</div>" +
       "<p class='muted'>Ключ хранилища: <code>" + STORAGE_KEY + "</code>. Сохраняются анкета, расчёты, меню, отметки тренировок, привычки, дневник и тема оформления.</p>";
   }
 
@@ -1371,9 +1613,9 @@
     } else if (action === "clear-demo") {
       clearAllData();
       showView("quiz");
-      setQuizStep(1);
+      setQuizStep(1, { animate: false });
     } else if (action === "delete-data") {
-      openModal('<h2>Удалить данные?</h2><p>Анкета, программа, дневник и отметки будут стёрты с этого устройства. Восстановить их будет нельзя.</p><button class="btn btn-danger" type="button" data-action="delete-confirm">Удалить</button> <button class="btn btn-ghost" type="button" data-action="close-modal">Отмена</button>');
+      openModal('<h2>Удалить данные?</h2><p>Анкета, программа, дневник и отметки будут стёрты с этого устройства. Восстановить их будет нельзя.</p><div class="btn-row"><button class="btn btn-danger" type="button" data-action="delete-confirm">Удалить</button><button class="btn btn-ghost" type="button" data-action="close-modal">Отмена</button></div>');
     } else if (action === "delete-confirm") {
       closeModal();
       clearAllData();
@@ -1408,7 +1650,12 @@
       state.habits.checks[hid] = state.habits.checks[hid] || {};
       state.habits.checks[hid][date] = !state.habits.checks[hid][date];
       saveState();
-      renderHabits();
+      var on = !!state.habits.checks[hid][date];
+      btn.classList.toggle("is-on", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.classList.remove("is-pulse");
+      void btn.offsetWidth;
+      btn.classList.add("is-pulse");
     } else if (action === "confirm-adjust") {
       var type = btn.getAttribute("data-type");
       if (type === "ease" && state.nutrition && state.program.calories && !state.program.calories.blocked) {
